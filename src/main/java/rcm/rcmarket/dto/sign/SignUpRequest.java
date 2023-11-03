@@ -8,6 +8,8 @@ import rcm.rcmarket.entity.member.Role;
 
 import java.util.List;
 
+// 여러 계층에서 단순히 데이터 전달용으로 사용되기에 @Data를 쓴다
+// @Data는 Getter, Setter, EqualsAndHashCode, ToString 등을 만들어준다함
 @Data
 @AllArgsConstructor
 public class SignUpRequest {

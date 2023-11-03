@@ -1,25 +1,26 @@
 package rcm.rcmarket.service.sign;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.stereotype.Service;
 import rcm.rcmarket.handler.JwtHandler;
+import lombok.RequiredArgsConstructor;
+// lombok의 Value와 차이점을 모르겠음
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class TokenService {
     private final JwtHandler jwtHandler;
 
-    @Value("${jwt.max-age.access}") // 1
+    @Value("${jwt.max-age.access}")
     private long accessTokenMaxAgeSeconds;
 
-    @Value("${jwt.max-age.refresh}") // 2
+    @Value("${jwt.max-age.refresh}")
     private long refreshTokenMaxAgeSeconds;
 
-    @Value("${jwt.key.access}") // 3
+    @Value("${jwt.key.access}")
     private String accessKey;
 
-    @Value("${jwt.key.refresh}") // 4
+    @Value("${jwt.key.refresh}")
     private String refreshKey;
 
     public String createAccessToken(String subject) {
