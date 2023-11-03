@@ -24,10 +24,7 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SignServiceTest {
@@ -63,6 +60,8 @@ public class SignServiceTest {
         verify(memberRepository).save(any());
     }
 
+    // email이 중복되었는지 확인
+    // 중복되었을 경우 true를 반환하게 되고 true일 경우 memberEmailAlreadyExistsException 발생
     @Test
     void validateSignUpByDuplicateEmailTest() {
         // given
@@ -73,6 +72,8 @@ public class SignServiceTest {
                 .isInstanceOf(MemberEmailAlreadyExistsException.class);
     }
 
+    // nickname이 중복되었는지 확인
+    // 중복되었을 경우 true를 반환하게 되고 true일 경우 memberNicknameAlreadyExistsException 발생
     @Test
     void validateSignUpByDuplicateNicknameTest() {
         // given
@@ -83,6 +84,8 @@ public class SignServiceTest {
                 .isInstanceOf(MemberNicknameAlreadyExistsException.class);
     }
 
+    // 등록되지 않은 권한 등급으로 회원가입을 수행하려하면 해당 권한 등급은 찾을 수 없기에 null(empty)이 반환됨
+    // 따라서 Optional.Empty()가 반환되면 RoleNotFoundException을 발생시킴
     @Test
     void signUpRoleNotFoundTest() {
         // given
@@ -93,6 +96,9 @@ public class SignServiceTest {
                 .isInstanceOf(RoleNotFoundException.class);
     }
 
+    // 정상적으로 로그인 처리가 되는지 확인하는 테스트
+    // 정상적으로 수행되면 accessToken과 refreshToken을 가지고있는 SignInResponse 가 반환된다.
+    // willReturn은 준비된 값을 의미하며 검증해볼 수 있도록 해주는 역할을 수행한다
     @Test
     void signInTest() {
         // given
@@ -109,6 +115,8 @@ public class SignServiceTest {
         assertThat(res.getRefreshToken()).isEqualTo("refresh");
     }
 
+    // 등록된 이메일이 아니라면 찾을 수 없기에 Optional.Empty()가 반환되고
+    // LoginFailureException을 발생시킨다.
     @Test
     void signInExceptionByNoneMemberTest() {
         // given
@@ -119,6 +127,8 @@ public class SignServiceTest {
                 .isInstanceOf(LoginFailureException.class);
     }
 
+    // passwordEncoder.matches가 false를 반환하면 -> 즉 비밀번호가 유효하지 않으면
+    // LoginFailureException이 발생한다.
     @Test
     void signInExceptionByInvalidPasswordTest() {
         // given
