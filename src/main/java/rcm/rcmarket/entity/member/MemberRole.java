@@ -1,7 +1,8 @@
 package rcm.rcmarket.entity.member;
 
-import javax.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter

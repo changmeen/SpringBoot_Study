@@ -1,5 +1,6 @@
 package rcm.rcmarket.entity.member;
 
+import rcm.rcmarket.entity.common.EntityDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,15 +37,12 @@ public class Member extends EntityDate{
             CascadeType.ALL, orphanRemoval = true)
     private Set<MemberRole> roles;
 
-    public Member(String email, String password,
-                  String username, String nickname,
-                  List<Role> roles) {
+    public Member(String email, String password, String username, String nickname, List<Role> roles) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.nickname = nickname;
-        this.roles = roles.stream()
-                .map(r -> new MemberRole(this, r)).collect(toSet());
+        this.roles = roles.stream().map(r -> new MemberRole(this, r)).collect(toSet());
     }
 
     public void updateNickname(String nickname) {

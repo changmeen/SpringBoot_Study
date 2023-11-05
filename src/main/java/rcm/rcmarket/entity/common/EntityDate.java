@@ -1,4 +1,4 @@
-package rcm.rcmarket.entity.member;
+package rcm.rcmarket.entity.common;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 public abstract class EntityDate {
-
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -22,4 +21,5 @@ public abstract class EntityDate {
     @LastModifiedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime modifiedAt;
+
 }

@@ -1,19 +1,19 @@
 package rcm.rcmarket.controller.sign;
 
+import rcm.rcmarket.dto.response.Response;
+import rcm.rcmarket.dto.sign.SignInRequest;
+import rcm.rcmarket.dto.sign.SignUpRequest;
+import rcm.rcmarket.service.sign.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import rcm.rcmarket.controller.response.Response;
-import rcm.rcmarket.dto.sign.SignInRequest;
-import rcm.rcmarket.dto.sign.SignUpRequest;
-import rcm.rcmarket.service.sign.SignService;
 
 import javax.validation.Valid;
 
-import static rcm.rcmarket.controller.response.Response.success;
+import static rcm.rcmarket.dto.response.Response.success;
 
 @RestController // Json으로 응답하기 위해선 RestController를 선언해야 한다
 @RequiredArgsConstructor
@@ -27,7 +27,6 @@ public class SignController {
     @ResponseStatus(HttpStatus.CREATED)
     public Response signUp(@Valid @RequestBody SignUpRequest req) {
         signService.signUp(req);
-
         return success();
     }
 

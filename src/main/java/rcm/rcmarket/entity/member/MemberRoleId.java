@@ -1,8 +1,8 @@
 package rcm.rcmarket.entity.member;
 
-import javax.persistence.Embeddable;
 import lombok.*;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
@@ -13,6 +13,6 @@ import java.io.Serializable;
 public class MemberRoleId implements Serializable {
 
     private Member member;
-
     private Role role;
+
 }

@@ -1,4 +1,4 @@
-package rcm.rcmarket.controller.response;
+package rcm.rcmarket.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
