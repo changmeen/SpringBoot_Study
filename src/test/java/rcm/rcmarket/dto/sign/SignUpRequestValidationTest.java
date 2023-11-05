@@ -9,7 +9,6 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SignUpRequestValidationTest {
 
@@ -108,6 +107,174 @@ public class SignUpRequestValidationTest {
         // given
         String invalidValue = " ";
         SignUpRequest req = createRequestWithPassword(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByShortPasswordTest() {
+        // given
+        String invalidValue = "12312a!";
+        SignUpRequest req = createRequestWithPassword(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByNoneAlphabetPasswordTest() {
+        // given
+        String invalidValue = "123!@#123";
+        SignUpRequest req = createRequestWithPassword(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByNoneNumberPasswordTest() {
+        // given
+        String invalidValue = "abc!@#abc";
+        SignUpRequest req = createRequestWithPassword(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByNoneSpecialCasePasswordTest() {
+        // given
+        String invalidValue = "abc123abc";
+        SignUpRequest req = createRequestWithPassword(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByEmptyUsernameTest() {
+        // given
+        String invalidValue = null;
+        SignUpRequest req = createRequestWithUsername(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByBlankUsernameTest() {
+        // given
+        String invalidValue = " ";
+        SignUpRequest req = createRequestWithUsername(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByShortUsernameTest() {
+        // given
+        String invalidValue = "한";
+        SignUpRequest req = createRequestWithUsername(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByNotAlphabetOrHangeulUsernameTest() {
+        // given
+        String invalieValue = "류2jae";
+        SignUpRequest req = createRequestWithUsername(invalieValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalieValue);
+    }
+
+    @Test
+    void invalidateByEmptyNicknameTest() {
+        // given
+        String invalidValue = null;
+        SignUpRequest req = createRequestWithNickname(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByBlankNicknameTest() {
+        // given
+        String invalidValue = " ";
+        SignUpRequest req = createRequestWithNickname(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByShortNicknameTest() {
+        // given
+        String invalidValue = "류";
+        SignUpRequest req = createRequestWithNickname(invalidValue);
+
+        // when
+        Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
+
+        // then
+        assertThat(validate).isNotEmpty();
+        assertThat(validate.stream().map(v -> v.getInvalidValue()).collect(toSet())).contains(invalidValue);
+    }
+
+    @Test
+    void invalidateByNotAlphabetOrHangeulNicknameTest() {
+        // given
+        String invalidValue = "류2jae";
+        SignUpRequest req = createRequestWithNickname(invalidValue);
 
         // when
         Set<ConstraintViolation<SignUpRequest>> validate = validator.validate(req);
