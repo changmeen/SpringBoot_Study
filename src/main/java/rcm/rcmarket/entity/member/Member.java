@@ -33,8 +33,7 @@ public class Member extends EntityDate{
 
     // Role은 직급이 아니라 가지고 있는 권한이기에 여러 개를 가질 수 있음
     // 따라서 member와 Role의 관계는 1:N 관계임
-    @OneToMany(mappedBy = "member", cascade =
-            CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<MemberRole> roles;
 
     public Member(String email, String password, String username, String nickname, List<Role> roles) {
