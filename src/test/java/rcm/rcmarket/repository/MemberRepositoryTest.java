@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static rcm.rcmarket.factory.entity.MemberFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -37,22 +38,6 @@ public class MemberRepositoryTest {
     private void clear() {
         em.flush();
         em.clear();
-    }
-
-    private Member createMemberWithRoles(List<Role> roles) {
-        return new Member("email", "password",
-                "username", "nickname",
-                roles);
-    }
-
-    private Member createMember(String email, String password,
-                                String username, String nickname) {
-        return new Member(email, password, username, nickname, emptyList());
-    }
-
-    private Member createMember() {
-        return new Member("email", "password",
-                "username", "nickname", emptyList());
     }
 
     @Test

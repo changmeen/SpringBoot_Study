@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // SpringBootTest의 기본 웹 관련 설정은 WebEnvironment.MOCK인데
 // 내장 톰켓을 실제로 띄워서 하고 싶으면 webEnvironment 설정을 RANDOM_PORT로 설정하면 된다
 @SpringBootTest
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 // 우리는 initDB의 프로필을 Local로 해두었는데 이러면 initDB가 빈으로 등록되어
 // 테스트에 필요한 데이터와는 다른 데이터가 들어올 수 있으니 test로 쓴다

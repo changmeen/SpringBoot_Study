@@ -8,6 +8,7 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
+import static rcm.rcmarket.factory.dto.SignUpRequestFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SignUpRequestValidationTest {
@@ -15,23 +16,23 @@ public class SignUpRequestValidationTest {
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private SignUpRequest createRequest() {
-        return new SignUpRequest("email@email.com", "123456a!", "username", "nickname");
+        return createSignUpRequest("email@email.com", "123456a!", "username", "nickname");
     }
 
     private SignUpRequest createRequestWithEmail(String email) {
-        return new SignUpRequest(email, "123456a!", "username", "nickname");
+        return createSignUpRequestWithEmail(email);
     }
 
     private SignUpRequest createRequestWithPassword(String password) {
-        return new SignUpRequest("email@email.com", password, "username", "nickname");
+        return createSignUpRequestWithPassword(password);
     }
 
     private SignUpRequest createRequestWithUsername(String username) {
-        return new SignUpRequest("email@email.com", "123456a!", username, "nickname");
+        return createSignUpRequestWithUsername(username);
     }
 
     private SignUpRequest createRequestWithNickname(String nickname) {
-        return new SignUpRequest("email@email.com", "123456a!", "username", nickname);
+        return createSignUpRequestWithNickname(nickname);
     }
 
     @Test

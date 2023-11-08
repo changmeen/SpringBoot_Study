@@ -9,6 +9,7 @@ import javax.validation.Validator;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
+import static rcm.rcmarket.factory.dto.SignInRequestFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SignInRequestValidationTest {
@@ -18,17 +19,17 @@ class SignInRequestValidationTest {
 
     // 정상적인 요청 객체를 생성하는 팩토리 메소드
     private SignInRequest createRequest() {
-        return new SignInRequest("email@email.com", "123456a!");
+        return createSignInRequest("email@email.com", "123456a!");
     }
 
     // 전달받은 email 필드 외에는 정상적인 요청 객체를 생성하는 팩토리 메소드
     private SignInRequest createRequestWithEmail(String email) {
-        return new SignInRequest(email, "123456a!");
+        return createSignInRequestWithEmail(email);
     }
 
     // 전달받은 password 필드 외에는 정상적인 요청 객체를 생성하는 팩토리 메소드
     private SignInRequest createRequestWithPassword(String password) {
-        return new SignInRequest("email@email.com", password);
+        return createSignInRequestWithPassword(password);
     }
 
     // 만약 validate에 문제가 없다면 위반 내용이 반환되지 않을 겻이고 isEmpty일 것이다.

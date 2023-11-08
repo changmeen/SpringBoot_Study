@@ -13,6 +13,7 @@ import rcm.rcmarket.repository.member.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static rcm.rcmarket.factory.entity.MemberFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,10 +25,6 @@ import static org.mockito.Mockito.verify;
 public class MemberServiceTest {
     @InjectMocks MemberService memberService;
     @Mock MemberRepository memberRepository;
-
-    private Member createMember() {
-        return new Member("email@email.com", "123456a!", "username", "nickname", List.of());
-    }
 
     @Test
     void readTest() {

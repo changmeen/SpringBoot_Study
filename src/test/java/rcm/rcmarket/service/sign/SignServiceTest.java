@@ -21,6 +21,10 @@ import rcm.rcmarket.repository.role.RoleRepository;
 
 import java.util.Optional;
 
+import static rcm.rcmarket.factory.dto.SignInRequestFactory.*;
+import static rcm.rcmarket.factory.dto.SignUpRequestFactory.*;
+import static rcm.rcmarket.factory.entity.MemberFactory.*;
+import static rcm.rcmarket.factory.entity.RoleFactory.*;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,20 +41,12 @@ public class SignServiceTest {
     @Mock PasswordEncoder passwordEncoder;
     @Mock TokenService tokenService;
 
-    private SignUpRequest createSignUpRequest() {
-        return new SignUpRequest("email", "password", "username", "nickname");
-    }
-
-    private Member createMember() {
-        return new Member("email", "password", "username", "nickname", emptyList());
-    }
-
     // verify를 이용해 passwordEncoder가 encode를 수행했는지, memberRepository가 save를 수행했는지 확인함
     @Test
     void SignUpTest() {
         // given
         SignUpRequest req = createSignUpRequest();
-        given(roleRepository.findByRoleType(RoleType.ROLE_NORMAL)).willReturn(Optional.of(new Role(RoleType.ROLE_NORMAL)));
+        given(roleRepository.findByRoleType(RoleType.ROLE_NORMAL)).willReturn(Optional.of(createRole()));
 
         // when
         signService.signUp(req);
@@ -108,7 +104,7 @@ public class SignServiceTest {
         given(tokenService.createRefreshToken(anyString())).willReturn("refresh");
 
         // when
-        SignInResponse res = signService.signIn(new SignInRequest("email", "password"));
+        SignInResponse res = signService.signIn(createSignInRequest("email", "password"));
 
         // then
         assertThat(res.getAccessToken()).isEqualTo("access");
@@ -123,7 +119,7 @@ public class SignServiceTest {
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> signService.signIn(new SignInRequest("email", "password")))
+        assertThatThrownBy(() -> signService.signIn(createSignInRequest("email", "password")))
                 .isInstanceOf(LoginFailureException.class);
     }
 
@@ -136,7 +132,7 @@ public class SignServiceTest {
         given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> signService.signIn(new SignInRequest("email", "password")))
+        assertThatThrownBy(() -> signService.signIn(createSignInRequest("email", "password")))
                 .isInstanceOf(LoginFailureException.class);
     }
 }
