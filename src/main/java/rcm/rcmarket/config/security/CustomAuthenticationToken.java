@@ -6,13 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
-
-    private String type;
     private CustomUserDetails principal;
 
-    public CustomAuthenticationToken(String type, CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities) {
+    public CustomAuthenticationToken(CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
-        this.type = type;
         this.principal = principal;
         setAuthenticated(true);
     }
@@ -26,9 +23,4 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     public Object getCredentials() {
         throw new UnsupportedOperationException();
     }
-
-    public String getType() {
-        return type;
-    }
-
 }

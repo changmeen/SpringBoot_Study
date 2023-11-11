@@ -1,5 +1,6 @@
 package rcm.rcmarket.service.sign;
 
+import rcm.rcmarket.dto.sign.RefreshTokenResponse;
 import rcm.rcmarket.dto.sign.SignInRequest;
 import rcm.rcmarket.dto.sign.SignInResponse;
 import rcm.rcmarket.dto.sign.SignUpRequest;
@@ -17,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 // @RequiredArgsConstructor를 클래스 레벨에 선언하면,
 // final로 선언된 인스턴스 변수들로 생성자를 만들어줍니다
 @RequiredArgsConstructor
-// 하나의 메소드를 하나의 트랜잭션으로 묶어준다
-@Transactional(readOnly = true)
 public class SignService {
 
     private final MemberRepository memberRepository;
@@ -37,6 +36,7 @@ public class SignService {
 
     // SignInRequest로 전달받은 email로 Member를 조회, 비밀번호 검증이 통과될 경우
     // AccessToken과 RefreshToken을 발급해준다.
+    @Transactional(readOnly = true)
     public SignInResponse signIn(SignInRequest req) {
         Member member = memberRepository.findByEmail(req.getEmail()).orElseThrow(LoginFailureException::new);
         validatePassword(req, member);
@@ -62,5 +62,19 @@ public class SignService {
 
     private String createSubject(Member member) {
         return String.valueOf(member.getId());
+    }
+
+    public RefreshTokenResponse refreshToken(String rToken) {
+        validateRefreshToken(rToken);
+        String subject = tokenService.extractRefreshTokenSubject(rToken);
+        String accessToken = tokenService.createAccessToken(subject);
+
+        return new RefreshTokenResponse(accessToken);
+    }
+
+    private void validateRefreshToken(String rToken) {
+        if(!tokenService.validateRefreshToken(rToken)) {
+            throw new AuthenticationEntryPointException();
+        }
     }
 }

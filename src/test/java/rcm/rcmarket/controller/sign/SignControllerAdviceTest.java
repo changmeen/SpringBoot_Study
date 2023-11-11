@@ -13,11 +13,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import rcm.rcmarket.advice.ExceptionAdvice;
 import rcm.rcmarket.dto.sign.SignInRequest;
 import rcm.rcmarket.dto.sign.SignUpRequest;
-import rcm.rcmarket.exception.LoginFailureException;
-import rcm.rcmarket.exception.MemberEmailAlreadyExistsException;
-import rcm.rcmarket.exception.MemberNicknameAlreadyExistsException;
-import rcm.rcmarket.exception.RoleNotFoundException;
+import rcm.rcmarket.exception.*;
 import rcm.rcmarket.service.sign.SignService;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static rcm.rcmarket.factory.dto.SignInRequestFactory.createSignInRequest;
 import static rcm.rcmarket.factory.dto.SignUpRequestFactory.createSignUpRequest;
 
@@ -123,5 +123,27 @@ public class SignControllerAdviceTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req))
         ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void refreshTokenAuthenticationEntryPointException() throws Exception {
+        // given
+        given(signService.refreshToken(anyString())).willThrow(AuthenticationEntryPointException.class);
+
+        // when, then
+        mockMvc.perform(
+                post("/api/refresh-token")
+                        .header("Authorization", "refreshToken"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(-1001));
+    }
+
+    @Test
+    void refreshTokenMissingRequestHeaderException() throws Exception {
+        // given, when, then
+        mockMvc.perform(
+                post("/api/refresh-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(-1009));
     }
 }

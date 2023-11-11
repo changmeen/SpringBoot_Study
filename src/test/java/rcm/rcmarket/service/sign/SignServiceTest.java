@@ -6,16 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import rcm.rcmarket.dto.sign.SignInRequest;
+import rcm.rcmarket.dto.sign.RefreshTokenResponse;
 import rcm.rcmarket.dto.sign.SignInResponse;
 import rcm.rcmarket.dto.sign.SignUpRequest;
-import rcm.rcmarket.entity.member.Member;
-import rcm.rcmarket.entity.member.Role;
 import rcm.rcmarket.entity.member.RoleType;
-import rcm.rcmarket.exception.LoginFailureException;
-import rcm.rcmarket.exception.MemberEmailAlreadyExistsException;
-import rcm.rcmarket.exception.MemberNicknameAlreadyExistsException;
-import rcm.rcmarket.exception.RoleNotFoundException;
+import rcm.rcmarket.exception.*;
 import rcm.rcmarket.repository.member.MemberRepository;
 import rcm.rcmarket.repository.role.RoleRepository;
 
@@ -25,7 +20,6 @@ import static rcm.rcmarket.factory.dto.SignInRequestFactory.*;
 import static rcm.rcmarket.factory.dto.SignUpRequestFactory.*;
 import static rcm.rcmarket.factory.entity.MemberFactory.*;
 import static rcm.rcmarket.factory.entity.RoleFactory.*;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
@@ -134,5 +128,33 @@ public class SignServiceTest {
         // when, then
         assertThatThrownBy(() -> signService.signIn(createSignInRequest("email", "password")))
                 .isInstanceOf(LoginFailureException.class);
+    }
+
+    @Test
+    void refreshTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        String subject = "subject";
+        String accessToken = "accessToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(true);
+        given(tokenService.extractRefreshTokenSubject(refreshToken)).willReturn(subject);
+        given(tokenService.createAccessToken(subject)).willReturn(accessToken);
+
+        // when
+        RefreshTokenResponse res = signService.refreshToken(refreshToken);
+
+        // then
+        assertThat(res.getAccessToken()).isEqualTo(accessToken);
+    }
+
+    @Test
+    void refreshTokenExceptionByInvalidTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(false);
+
+        // when, then
+        assertThatThrownBy(() -> signService.refreshToken(refreshToken))
+                .isInstanceOf(AuthenticationEntryPointException.class);
     }
 }

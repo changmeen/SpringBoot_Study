@@ -17,12 +17,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static rcm.rcmarket.factory.dto.SignInRequestFactory.createSignInRequest;
 import static rcm.rcmarket.factory.dto.SignUpRequestFactory.createSignUpRequest;
+import static rcm.rcmarket.factory.dto.RefreshTokenResponseFactory.createRefreshTokenResponse;
 
 @ExtendWith(MockitoExtension.class)
 class SignControllerTest {
@@ -81,5 +81,19 @@ class SignControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.result").doesNotExist());
+    }
+
+    @Test
+    void refreshTokenTest() throws Exception {
+        // given
+        given(signService.refreshToken("refreshToken")).willReturn(createRefreshTokenResponse("accessToken"));
+
+        // when, then
+        mockMvc.perform(
+                post("/api/refresh-token")
+                        .header("Authorization", "refreshToken"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.data.accessToken")
+                        .value("accessToken"));
     }
 }

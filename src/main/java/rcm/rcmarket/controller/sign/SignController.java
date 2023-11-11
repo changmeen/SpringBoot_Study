@@ -1,15 +1,12 @@
 package rcm.rcmarket.controller.sign;
 
+import org.springframework.web.bind.annotation.*;
 import rcm.rcmarket.dto.response.Response;
 import rcm.rcmarket.dto.sign.SignInRequest;
 import rcm.rcmarket.dto.sign.SignUpRequest;
 import rcm.rcmarket.service.sign.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -37,5 +34,11 @@ public class SignController {
     @ResponseStatus(HttpStatus.OK)
     public Response signIn(@Valid @RequestBody SignInRequest req) {
         return success(signService.signIn(req));
+    }
+
+    @PostMapping("/api/refresh-token")
+    @ResponseStatus(HttpStatus.OK)
+    public Response refreshToken(@RequestHeader(value = "Authorization") String refreshToken) {
+        return success(signService.refreshToken(refreshToken));
     }
 }

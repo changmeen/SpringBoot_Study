@@ -16,23 +16,6 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class AuthHelper {
-
-    public boolean isAccessTokenType() {
-        return "access".equals(((CustomAuthenticationToken) getAuthentication()).getType());
-    }
-
-    public boolean isRefreshTokenType() {
-        return "refresh".equals(((CustomAuthenticationToken) getAuthentication()).getType());
-    }
-
-    private CustomUserDetails getUserDetails() {
-        return (CustomUserDetails) getAuthentication().getPrincipal();
-    }
-
-    private Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
     public boolean isAuthenticated() {
         return getAuthentication() instanceof CustomAuthenticationToken &&
                 getAuthentication().isAuthenticated();
@@ -48,5 +31,13 @@ public class AuthHelper {
                 .map(authority -> authority.getAuthority())
                 .map(strAuth -> RoleType.valueOf(strAuth))
                 .collect(Collectors.toSet());
+    }
+
+    private CustomUserDetails getUserDetails() {
+        return (CustomUserDetails) getAuthentication().getPrincipal();
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }

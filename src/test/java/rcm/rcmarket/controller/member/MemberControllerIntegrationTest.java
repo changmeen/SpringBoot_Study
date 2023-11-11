@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static rcm.rcmarket.factory.dto.SignInRequestFactory.createSignInRequest;
 
 // Spring Security와 관한 테스트에는 @SpringBootTest를 쓴다
 // SpringBootTest의 기본 웹 관련 설정은 WebEnvironment.MOCK인데
@@ -128,12 +129,12 @@ public class MemberControllerIntegrationTest {
     void deleteAccessDeniedByRefreshTokenTest() throws Exception {
         // given
         Member member = memberRepository.findByEmail(initDB.getMember1Email()).orElseThrow(MemberNotFoundException::new);
-        SignInResponse signInRes = signService.signIn(new SignInRequest(initDB.getMember1Email(), initDB.getPassword()));
+        SignInResponse signInRes = signService.signIn(createSignInRequest(initDB.getMember1Email(), initDB.getPassword()));
 
         // when, then
         mockMvc.perform(
                 delete("/api/members/{id}", member.getId()).header("Authorization", signInRes.getRefreshToken()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/exception/access-denied"));
+                .andExpect(redirectedUrl("/exception/entry-point"));
     }
 }
