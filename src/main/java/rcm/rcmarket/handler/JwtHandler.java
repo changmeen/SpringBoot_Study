@@ -5,11 +5,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+// JWT는 세 부분으로 나뉜다.
+// 헤더, 페이로드, 서명으로 나뉘고
+// 헤더는 토큰의 타입, 서명 알고리즘을 포함
+// 페이로드는 토큰의 주요 내용
+// 서명은 JWT의 무결성을 보장한다.
 @Component
 public class JwtHandler {
 
     private String type = "Bearer ";
 
+    // JWT를 생성하는 함수
+    // encode: 서명에 사용될 키(Base64로 인코딩 되어있음)
+    // JWT를 생성할 때 서명에 사용되는 비밀 값이다
+    // subject: 토큰의 주체(subject)로 설정될 값
+    // maxAgeSeconds: 토큰의 만료 시간까지의 유효 기간
+    // 반환값: 생성된 JWT 문자열
     public String createToken(String encodedKey, String subject, long maxAgeSeconds) {
         Date now = new Date();
         return type + Jwts.builder()
@@ -20,10 +31,17 @@ public class JwtHandler {
                 .compact();
     }
 
+    // 주어진 토큰에서 주체(subject)를 추출하는 함수
+    // encodedKey: 서명에 사용될 키, 키가 있어야 암, JWT의 무결성을 확인한다.
+    // token: 추출할 JWT 토큰
     public String extractSubject(String encodedKey, String token) {
         return parse(encodedKey, token).getBody().getSubject();
     }
 
+    // 주어진 토큰의 유효성을 검증하는 함수
+    // encodedKey: 서명에 사용될 키
+    // token: 검증할 JWT 토큰
+    // 반환값: 유효하면 true, 아니면 false
     public boolean validate(String encodedKey, String token) {
         try {
             parse(encodedKey, token);
@@ -33,6 +51,10 @@ public class JwtHandler {
         }
     }
 
+    // JWT에서 파싱은 JWT를 분해하고 그 정보를 추출하는 과정을 의미한다.
+    // key: 분해하기 위한 key, createToken에서 사용된 encodedKey가 사용되어야 한다
+    // token: 분해되는 JWT token
+    // 반환값: JWS(Java Web Signature) 객체, 토큰의 클레임을 포함
     private Jws<Claims> parse(String key, String token) {
         return Jwts.parser()
                 .setSigningKey(key)

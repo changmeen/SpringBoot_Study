@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.GenericFilterBean;
+import rcm.rcmarket.config.token.TokenHelper;
 import rcm.rcmarket.service.sign.TokenService;
 
 import javax.servlet.FilterChain;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-    private final TokenService tokenService;
+    private final TokenHelper tokenHelper;
     private final CustomUserDetailsService userDetailsService;
 
     private String extractToken(ServletRequest request) {
@@ -34,11 +35,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     // 등록해주는 작업
 
     private boolean validateToken(String toekn) {
-        return toekn != null && tokenService.validateAccessToken(toekn);
+        return toekn != null && tokenHelper.validate(toekn);
     }
 
     private void setAuthentication(String token) {
-        String userId = tokenService.extractAccessTokenSubject(token);
+        String userId = tokenHelper.extractSubject(token);
         CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
         SecurityContextHolder.getContext().setAuthentication(new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()));
     }

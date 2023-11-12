@@ -1,11 +1,13 @@
 package rcm.rcmarket.service.sign;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import rcm.rcmarket.config.token.TokenHelper;
 import rcm.rcmarket.dto.sign.RefreshTokenResponse;
 import rcm.rcmarket.dto.sign.SignInResponse;
 import rcm.rcmarket.dto.sign.SignUpRequest;
@@ -29,13 +31,19 @@ public class SignServiceTest {
 
     // Mockito 프레임워크는 테스트를 위한 것이다
     // 테스트를 위해 의존하고 있는 객체들을 가짜로 만들어서 SignService에 주입해준다
-    @InjectMocks SignService signService;
+    SignService signService;
     @Mock MemberRepository memberRepository;
     @Mock RoleRepository roleRepository;
     @Mock PasswordEncoder passwordEncoder;
-    @Mock TokenService tokenService;
+    @Mock TokenHelper accessTokenHelper;
+    @Mock TokenHelper refreshTokenHelper;
 
     // verify를 이용해 passwordEncoder가 encode를 수행했는지, memberRepository가 save를 수행했는지 확인함
+    @BeforeEach
+    void beforeEach() {
+        signService = new SignService(memberRepository, roleRepository, passwordEncoder, accessTokenHelper, refreshTokenHelper);
+    }
+
     @Test
     void SignUpTest() {
         // given
@@ -94,8 +102,8 @@ public class SignServiceTest {
         // given
         given(memberRepository.findByEmail(any())).willReturn(Optional.of(createMember()));
         given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
-        given(tokenService.createAccessToken(anyString())).willReturn("access");
-        given(tokenService.createRefreshToken(anyString())).willReturn("refresh");
+        given(accessTokenHelper.createToken(anyString())).willReturn("access");
+        given(refreshTokenHelper.createToken(anyString())).willReturn("refresh");
 
         // when
         SignInResponse res = signService.signIn(createSignInRequest("email", "password"));
@@ -136,9 +144,9 @@ public class SignServiceTest {
         String refreshToken = "refreshToken";
         String subject = "subject";
         String accessToken = "accessToken";
-        given(tokenService.validateRefreshToken(refreshToken)).willReturn(true);
-        given(tokenService.extractRefreshTokenSubject(refreshToken)).willReturn(subject);
-        given(tokenService.createAccessToken(subject)).willReturn(accessToken);
+        given(refreshTokenHelper.validate(refreshToken)).willReturn(true);
+        given(refreshTokenHelper.extractSubject(refreshToken)).willReturn(subject);
+        given(accessTokenHelper.createToken(subject)).willReturn(accessToken);
 
         // when
         RefreshTokenResponse res = signService.refreshToken(refreshToken);
@@ -151,7 +159,7 @@ public class SignServiceTest {
     void refreshTokenExceptionByInvalidTokenTest() {
         // given
         String refreshToken = "refreshToken";
-        given(tokenService.validateRefreshToken(refreshToken)).willReturn(false);
+        given(refreshTokenHelper.validate(refreshToken)).willReturn(false);
 
         // when, then
         assertThatThrownBy(() -> signService.refreshToken(refreshToken))

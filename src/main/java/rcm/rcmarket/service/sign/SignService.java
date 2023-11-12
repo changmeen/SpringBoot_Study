@@ -1,5 +1,6 @@
 package rcm.rcmarket.service.sign;
 
+import rcm.rcmarket.config.token.TokenHelper;
 import rcm.rcmarket.dto.sign.RefreshTokenResponse;
 import rcm.rcmarket.dto.sign.SignInRequest;
 import rcm.rcmarket.dto.sign.SignInResponse;
@@ -23,7 +24,8 @@ public class SignService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
+    private final TokenHelper accessTokenHelper;
+    private final TokenHelper refreshTokenHelper;
 
     // 이메일과 닉네임의 중복성을 검색, 주어진 SignUpRequest를 Entity로 변환한다
     @Transactional
@@ -41,8 +43,8 @@ public class SignService {
         Member member = memberRepository.findByEmail(req.getEmail()).orElseThrow(LoginFailureException::new);
         validatePassword(req, member);
         String subject = createSubject(member);
-        String accessToken = tokenService.createAccessToken(subject);
-        String refreshToken = tokenService.createRefreshToken(subject);
+        String accessToken = accessTokenHelper.createToken(subject);
+        String refreshToken = refreshTokenHelper.createToken(subject);
         return new SignInResponse(accessToken, refreshToken);
     }
 
@@ -66,14 +68,14 @@ public class SignService {
 
     public RefreshTokenResponse refreshToken(String rToken) {
         validateRefreshToken(rToken);
-        String subject = tokenService.extractRefreshTokenSubject(rToken);
-        String accessToken = tokenService.createAccessToken(subject);
+        String subject = refreshTokenHelper.extractSubject(rToken);
+        String accessToken = accessTokenHelper.createToken(subject);
 
         return new RefreshTokenResponse(accessToken);
     }
 
     private void validateRefreshToken(String rToken) {
-        if(!tokenService.validateRefreshToken(rToken)) {
+        if(!refreshTokenHelper.validate(rToken)) {
             throw new AuthenticationEntryPointException();
         }
     }
